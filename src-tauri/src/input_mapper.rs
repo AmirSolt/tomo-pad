@@ -1,8 +1,7 @@
-use tauri::{AppHandle, Emitter};
-use crate::app_state::AppState;
+use tauri::{AppHandle};
 use crate::funcs;
 use gilrs::{Event, EventType, Button, Gilrs, Axis};
-use enigo::{Enigo, Settings, Direction, Key, Keyboard, Mouse, Button as MouseButton, Coordinate};
+use enigo::{Enigo, Direction, Key, Keyboard, Mouse, Button as MouseButton, Coordinate};
 
 pub fn handle_input(event: &Event, active: bool, osk_open: bool, app: &AppHandle, enigo: &mut Enigo) {
     if !active {
