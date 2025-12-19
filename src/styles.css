@@ -21,15 +21,17 @@
   outline: none;
 }
 
-.key[data-focused]{
+
+.key:focus{
    border-color: #396cd8;
 }
+
 
 .key:hover {
   border-color: #396cd8;
 }
 
-.key:active {
+.key:active, .key.active {
   background-color: #396cd8;
 }
 
