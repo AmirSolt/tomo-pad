@@ -1,9 +1,15 @@
-use tauri::{AppHandle};
 use crate::funcs;
-use gilrs::{Event, EventType, Button, Gilrs, Axis};
-use enigo::{Enigo, Direction, Key, Keyboard, Mouse, Button as MouseButton, Coordinate};
+use enigo::{Button as MouseButton, Coordinate, Direction, Enigo, Key, Keyboard, Mouse};
+use gilrs::{Axis, Button, Event, EventType, Gilrs};
+use tauri::AppHandle;
 
-pub fn handle_input(event: &Event, active: bool, osk_open: bool, app: &AppHandle, enigo: &mut Enigo) {
+pub fn handle_input(
+    event: &Event,
+    active: bool,
+    osk_open: bool,
+    app: &AppHandle,
+    enigo: &mut Enigo,
+) {
     if !active {
         return;
     }
@@ -38,12 +44,24 @@ fn handle_system_input(event: &Event, app: &AppHandle, enigo: &mut Enigo) {
                 funcs::open_osk(app);
             }
         }
-        Button::South => { let _ = enigo.button(MouseButton::Left, direction); }
-        Button::East => { let _ = enigo.button(MouseButton::Right, direction); }
-        Button::DPadUp => { let _ = enigo.key(Key::UpArrow, direction); }
-        Button::DPadDown => { let _ = enigo.key(Key::DownArrow, direction); }
-        Button::DPadLeft => { let _ = enigo.key(Key::LeftArrow, direction); }
-        Button::DPadRight => { let _ = enigo.key(Key::RightArrow, direction); }
+        Button::South => {
+            let _ = enigo.button(MouseButton::Left, direction);
+        }
+        Button::East => {
+            let _ = enigo.button(MouseButton::Right, direction);
+        }
+        Button::DPadUp => {
+            let _ = enigo.key(Key::UpArrow, direction);
+        }
+        Button::DPadDown => {
+            let _ = enigo.key(Key::DownArrow, direction);
+        }
+        Button::DPadLeft => {
+            let _ = enigo.key(Key::LeftArrow, direction);
+        }
+        Button::DPadRight => {
+            let _ = enigo.key(Key::RightArrow, direction);
+        }
         _ => {}
     }
 }

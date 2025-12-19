@@ -1,5 +1,5 @@
-use tauri::{AppHandle, Manager, Emitter};
 use crate::app_state::SharedAppState;
+use tauri::{AppHandle, Emitter, Manager};
 
 pub fn open_osk(app: &AppHandle) {
     let state_handle = app.state::<SharedAppState>();
