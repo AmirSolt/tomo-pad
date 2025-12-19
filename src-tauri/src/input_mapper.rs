@@ -43,7 +43,7 @@ fn handle_osk_input(event: &Event, app: &AppHandle, enigo: &mut Enigo) {
             }
         }
         Button::South => {
-            let _ = enigo.key(Key::Select, direction);
+            let _ = enigo.key(Key::Return, direction);
         }
         Button::DPadUp => {
             let _ = enigo.key(Key::UpArrow, direction);
