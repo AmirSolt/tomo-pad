@@ -203,8 +203,8 @@ Write-Host "`n--- Post-Build Processing ---"
 # 4.1 Find Artifacts
 Write-Host "Locating build artifacts..."
 $nsisDir = Join-Path $PSScriptRoot "..\src-tauri\target\release\bundle\nsis"
-$exeFile = Get-ChildItem -Path $nsisDir -Filter "*-setup.exe" | Select-Object -First 1
-if (-not $exeFile) { Write-Error "Could not find setup .exe in $nsisDir"; exit 1 }
+$exeFile = Get-ChildItem -Path $nsisDir -Filter "*${version}*-setup.exe" | Select-Object -First 1
+if (-not $exeFile) { Write-Error "Could not find setup .exe in $nsisDir matching version $version"; exit 1 }
 
 $sigFile = Get-Item "$($exeFile.FullName).sig"
 if (-not $sigFile) { Write-Error "Could not find .sig file for $($exeFile.Name)"; exit 1 }
