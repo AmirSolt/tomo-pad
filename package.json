@@ -11,9 +11,11 @@
     "publish": "powershell -ExecutionPolicy Bypass -File ./publish/publish.ps1"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.18",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
-    "@tauri-apps/plugin-updater": "^2.9.0"
+    "@tauri-apps/plugin-updater": "^2.9.0",
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",

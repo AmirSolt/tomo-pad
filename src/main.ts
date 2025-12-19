@@ -1,5 +1,4 @@
 
-
 const buttonStates: { [index: number]: boolean } = {};
 
 function pollGamepads() {

@@ -94,7 +94,7 @@ pub fn init_gamepad_listener(app: AppHandle) {
                     state.toggle_guard = false;
                 }
 
-                if state.active {
+                if state.active && !state.osk_open {
                     run_mouse_update = true;
                 }
             }

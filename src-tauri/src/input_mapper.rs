@@ -14,6 +14,17 @@ pub fn handle_input(
         return;
     }
 
+    if osk_open {
+        handle_osk_input(event, app, enigo);
+        return;
+    } else {
+        handle_system_input(event, app, enigo);
+        return;
+    }
+}
+
+
+fn handle_osk_input(event: &Event, app: &AppHandle, enigo: &mut Enigo) {
     let (btn, direction) = match event.event {
         EventType::ButtonPressed(b, _) => (b, Direction::Press),
         EventType::ButtonReleased(b, _) => (b, Direction::Release),
@@ -23,17 +34,51 @@ pub fn handle_input(
     match btn {
         Button::Start => {
             if direction == Direction::Press {
-                if osk_open{
-                    funcs::close_osk(app);
-                }else{
-                    funcs::open_osk(app);
-                }
+                funcs::close_osk(app);
             }
         }
-        Button::RightTrigger2 => {
+        Button::East => {
+            if direction == Direction::Release {
+                funcs::close_osk(app);
+            }
+        }
+        Button::South => {
+            let _ = enigo.key(Key::Select, direction);
+        }
+        Button::DPadUp => {
+            let _ = enigo.key(Key::UpArrow, direction);
+        }
+        Button::DPadDown => {
+            let _ = enigo.key(Key::DownArrow, direction);
+        }
+        Button::DPadLeft => {
+            let _ = enigo.key(Key::LeftArrow, direction);
+        }
+        Button::DPadRight => {
+            let _ = enigo.key(Key::RightArrow, direction);
+        }
+        _ => {}
+    }
+}
+
+
+fn handle_system_input(event: &Event, app: &AppHandle, enigo: &mut Enigo) {
+    let (btn, direction) = match event.event {
+        EventType::ButtonPressed(b, _) => (b, Direction::Press),
+        EventType::ButtonReleased(b, _) => (b, Direction::Release),
+        _ => return,
+    };
+
+    match btn {
+        Button::Start => {
+            if direction == Direction::Press {
+                funcs::open_osk(app);
+            }
+        }
+        Button::South => {
             let _ = enigo.button(MouseButton::Left, direction);
         }
-        Button::LeftTrigger2 => {
+        Button::East => {
             let _ = enigo.button(MouseButton::Right, direction);
         }
         Button::DPadUp => {
@@ -70,7 +115,7 @@ pub fn update_mouse(gilrs: &Gilrs, enigo: &mut Enigo) {
         let scroll_y = gamepad.value(Axis::RightStickY);
 
         if scroll_x.abs() > 0.1 || scroll_y.abs() > 0.1 {
-            let scroll_scale = 1.0;
+            let scroll_scale = 1.5;
             let s_x = (scroll_x * scroll_scale) as i32;
             let s_y = (scroll_y * scroll_scale * -1.0)  as i32;
 
