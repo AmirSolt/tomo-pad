@@ -52,8 +52,8 @@ pub fn update_mouse(gilrs: &Gilrs, enigo: &mut Enigo, state: &mut MouseState) {
         let axis_y = gamepad.value(Axis::LeftStickY);
 
         if axis_x.abs() > 0.1 || axis_y.abs() > 0.1 {
-            let base_sens = 2.0;
-            let accel_sens = 28.0;
+            let base_sens = 1.0;
+            let accel_sens = 24.0;
 
             let raw_x = axis_x * base_sens + axis_x.powi(3) * accel_sens;
             let raw_y = -axis_y * base_sens + (-axis_y).powi(3) * accel_sens;
@@ -80,7 +80,7 @@ pub fn update_mouse(gilrs: &Gilrs, enigo: &mut Enigo, state: &mut MouseState) {
 
         if scroll_x.abs() > 0.1 || scroll_y.abs() > 0.1 {
             let base_scroll = 0.0;
-            let accel_scroll = 1.2;
+            let accel_scroll = 1.02;
 
             let raw_sx = scroll_x * base_scroll + scroll_x.powi(3) * accel_scroll;
             let raw_sy = -scroll_y * base_scroll + (-scroll_y).powi(3) * accel_scroll;
