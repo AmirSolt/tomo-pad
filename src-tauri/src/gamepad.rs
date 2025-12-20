@@ -28,6 +28,7 @@ pub fn init_gamepad_listener(app: AppHandle) {
         };
 
         let mut osk_state = input_mapper::OskState::default();
+        let mut mouse_state = input_mapper::MouseState::default();
 
         loop {
             // Process all pending events
@@ -117,7 +118,7 @@ pub fn init_gamepad_listener(app: AppHandle) {
             }
 
             if run_mouse_update {
-                input_mapper::update_mouse(&gilrs, &mut enigo);
+                input_mapper::update_mouse(&gilrs, &mut enigo, &mut mouse_state);
             } else if run_osk_update {
                 input_mapper::update_osk_stick(&gilrs, &app, &mut osk_state);
             }

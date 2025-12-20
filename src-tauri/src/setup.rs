@@ -13,14 +13,14 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
         // Set always on top
         let _ = window.set_always_on_top(true);
 
-        // Position at bottom center
+        // Position at bottom right
         if let Ok(Some(monitor)) = window.current_monitor() {
             let screen_size = monitor.size();
             let window_size = window.outer_size().unwrap_or(tauri::PhysicalSize { width: 800, height: 300 });
             
             const MARGIN: i32 = 50;
 
-            let x = (screen_size.width as i32 - window_size.width as i32) / 2;
+            let x = screen_size.width as i32 - window_size.width as i32 - MARGIN;
             let y = screen_size.height as i32 - window_size.height as i32 - MARGIN;
             
             let _ = window.set_position(tauri::Position::Physical(tauri::PhysicalPosition { x, y }));

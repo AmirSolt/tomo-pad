@@ -2,7 +2,7 @@ mod osk;
 mod system;
 
 pub use osk::{OskState, update_osk_stick};
-pub use system::update_mouse;
+pub use system::{MouseState, update_mouse};
 
 use enigo::Enigo;
 use gilrs::Event;
