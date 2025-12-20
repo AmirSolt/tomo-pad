@@ -4,7 +4,7 @@ use enigo::{Enigo, Settings};
 use gilrs::{Button, EventType, Gilrs};
 use std::thread;
 use std::time::{Duration, Instant};
-use tauri::{AppHandle, Emitter, Manager};
+use tauri::{AppHandle, Manager};
 
 pub fn init_gamepad_listener(app: AppHandle) {
     thread::spawn(move || {
@@ -26,6 +26,8 @@ pub fn init_gamepad_listener(app: AppHandle) {
                 return;
             }
         };
+
+        let mut osk_state = input_mapper::OskState::default();
 
         loop {
             // Process all pending events
@@ -52,61 +54,72 @@ pub fn init_gamepad_listener(app: AppHandle) {
 
             // Check combo on all connected gamepads
             let state_handle = app.state::<SharedAppState>();
-            let mut should_close_osk = false;
             let mut run_mouse_update = false;
+            let mut run_osk_update = false;
+
+            let mut combo_pressed = false;
+            for (_id, gamepad) in gilrs.gamepads() {
+                let start = gamepad.is_pressed(Button::Start);
+                let select = gamepad.is_pressed(Button::Select);
+
+                if start || select {
+                    // println!("Gamepad {}: Start={}, Select={}", id, start, select);
+                }
+
+                if start && select {
+                    combo_pressed = true;
+                    break;
+                }
+            }
+
+            let mut should_toggle = false;
+            let mut was_active = false;
 
             {
                 let mut state = state_handle.lock().unwrap();
-                let mut combo_pressed = false;
-
-                for (_id, gamepad) in gilrs.gamepads() {
-                    let start = gamepad.is_pressed(Button::Start);
-                    let select = gamepad.is_pressed(Button::Select);
-
-                    if start || select {
-                        // println!("Gamepad {}: Start={}, Select={}", id, start, select);
-                    }
-
-                    if start && select {
-                        combo_pressed = true;
-                        break;
-                    }
-                }
 
                 if combo_pressed {
                     if !state.toggle_guard {
-                        state.active = !state.active;
                         state.toggle_guard = true;
                         state.last_toggle_time = Some(Instant::now());
-
-                        // Emit active changed event
-                        let _ = app.emit("app_active_changed", state.active);
-                        println!("Active toggled: {}", state.active);
-
-                        if !state.active {
-                            state.osk_open = false;
-                            let _ = app.emit("osk_visibility_changed", false);
-                            should_close_osk = true;
-                        }
+                        should_toggle = true;
+                        was_active = state.active;
                     }
                 } else {
                     // Reset guard if combo is NOT pressed
                     state.toggle_guard = false;
                 }
 
-                if state.active && !state.osk_open {
-                    run_mouse_update = true;
+                if !should_toggle && state.active {
+                    if state.osk_open {
+                        run_osk_update = true;
+                    } else {
+                        run_mouse_update = true;
+                    }
                 }
             }
 
-            if should_close_osk {
-                if let Some(window) = app.get_webview_window("main") {
-                    let _ = window.hide();
+            if should_toggle {
+                if was_active {
+                    crate::funcs::deactivate(&app);
+                } else {
+                    crate::funcs::activate(&app);
+                }
+
+                let state = state_handle.lock().unwrap();
+                if state.active {
+                    if state.osk_open {
+                        run_osk_update = true;
+                    } else {
+                        run_mouse_update = true;
+                    }
                 }
             }
 
             if run_mouse_update {
                 input_mapper::update_mouse(&gilrs, &mut enigo);
+            } else if run_osk_update {
+                input_mapper::update_osk_stick(&gilrs, &app, &mut osk_state);
             }
 
             thread::sleep(Duration::from_millis(10));

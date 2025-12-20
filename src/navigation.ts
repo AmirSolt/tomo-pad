@@ -1,138 +1,134 @@
-
 import Keyboard from 'simple-keyboard';
 
-export function handleNavigation(e: KeyboardEvent, keyboard?: Keyboard) {
-  if (e.key === 'Enter') {
-      const active = document.activeElement as HTMLElement;
-      if (active && (active.classList.contains('key') || active.classList.contains('hg-button'))) {
-          const buttonName = active.getAttribute('data-skbtn');
-          if (buttonName && keyboard) {
-              keyboard.handleButtonClicked(buttonName);
-          } else {
-              active.click();
-          }
-          active.classList.add('hg-activeButton');
-          setTimeout(() => active.classList.remove('hg-activeButton'), 150);
-      }
-      return;
-  }
+let activeElement: HTMLElement | null = null;
+let moveInterval: number | null = null;
 
-  if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+export function initNavigation(keyboard: Keyboard) {
+    // Initial selection
+    setTimeout(() => {
+        findInitialActive();
+    }, 100); // Wait for render
+}
 
-  const active = document.activeElement as HTMLElement;
-  
-  // If nothing is focused, or body is focused, focus the first key
-  if (!active || active === document.body) {
-      e.preventDefault();
-      const firstKey = document.querySelector('[tabindex="0"]') as HTMLElement;
-      if (firstKey) firstKey.focus();
-      return;
-  }
-  
-  if (active.getAttribute('tabindex') !== '0') return;
+function findInitialActive() {
+    const first = document.querySelector('.hg-button') as HTMLElement;
+    if (first) {
+        setActive(first);
+    }
+}
 
-  e.preventDefault();
+export function handleMove(phase: 'down' | 'repeat' | 'up', dx: number, dy: number) {
+    console.log(phase)
+    if (phase === 'down') {
+        move(dx, dy);
+        startMoveRepeat(dx, dy);
+    } else if (phase === 'up') {
+        stopMoveRepeat();
+    }
+}
 
-  const all = Array.from(document.querySelectorAll('[tabindex="0"]')) as HTMLElement[];
-  const currentRect = active.getBoundingClientRect();
-  const currentCenter = {
-    x: currentRect.left + currentRect.width / 2,
-    y: currentRect.top + currentRect.height / 2
-  };
+function startMoveRepeat(dx: number, dy: number) {
+    stopMoveRepeat();
+    moveInterval = window.setTimeout(() => {
+        moveInterval = window.setInterval(() => {
+            move(dx, dy);
+        }, 100);
+    }, 300);
+}
 
-  let bestCandidate: HTMLElement | null = null;
-  let minDistance = Infinity;
+function stopMoveRepeat() {
+    if (moveInterval) {
+        clearTimeout(moveInterval);
+        clearInterval(moveInterval);
+        moveInterval = null;
+    }
+}
 
-  let bestWrapCandidate: HTMLElement | null = null;
-  let minWrapDistance = Infinity;
+function move(dx: number, dy: number) {
+    if (!activeElement) {
+        findInitialActive();
+        if (!activeElement) return;
+    }
 
-  for (const candidate of all) {
-    if (candidate === active) continue;
-
-    const rect = candidate.getBoundingClientRect();
-    const center = {
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2
+    const all = Array.from(document.querySelectorAll('.hg-button')) as HTMLElement[];
+    const currentRect = activeElement!.getBoundingClientRect();
+    const currentCenter = {
+        x: currentRect.left + currentRect.width / 2,
+        y: currentRect.top + currentRect.height / 2
     };
 
-    let isValid = false;
-    if (e.key === 'ArrowRight') {
-      isValid = center.x > currentCenter.x;
-    } else if (e.key === 'ArrowLeft') {
-      isValid = center.x < currentCenter.x;
-    } else if (e.key === 'ArrowDown') {
-      isValid = center.y > currentCenter.y;
-    } else if (e.key === 'ArrowUp') {
-      isValid = center.y < currentCenter.y;
-    }
+    let bestCandidate: HTMLElement | null = null;
+    let minDistance = Infinity;
 
-    if (isValid) {
-        let primaryDist = 0;
-        let secondaryDist = 0;
+    for (const candidate of all) {
+        if (candidate === activeElement) continue;
+
+        const rect = candidate.getBoundingClientRect();
+        const center = {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+        };
+
+        // Filter by direction
+        let isValid = false;
+        if (dx > 0) { // Right
+            isValid = center.x > currentCenter.x;
+        } else if (dx < 0) { // Left
+            isValid = center.x < currentCenter.x;
+        } else if (dy > 0) { // Down
+            isValid = center.y > currentCenter.y;
+        } else if (dy < 0) { // Up
+            isValid = center.y < currentCenter.y;
+        }
+
+        if (!isValid) continue;
+
+        // Calculate distance
+        // Prefer candidates that are closer in the primary direction
+        // and aligned in the other direction.
         
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-            // Strict Y-axis overlap check for row navigation
-            // The center of the current element MUST be within the vertical bounds of the candidate
-            if (currentCenter.y < rect.top || currentCenter.y > rect.bottom) {
-                isValid = false;
-            } else {
-                primaryDist = Math.abs(center.x - currentCenter.x);
-                secondaryDist = 0;
-            }
+        const distSq = Math.pow(center.x - currentCenter.x, 2) + Math.pow(center.y - currentCenter.y, 2);
+        
+        // Weighting: penalize misalignment
+        // If moving horizontal, penalize vertical distance
+        let penalty = 0;
+        if (dx !== 0) {
+            penalty = Math.abs(center.y - currentCenter.y) * 5;
         } else {
-            // Up / Down
-            primaryDist = Math.abs(center.y - currentCenter.y);
-            
-            // Secondary: X axis overlap check
-            if (currentCenter.x >= rect.left && currentCenter.x <= rect.right) {
-                secondaryDist = 0;
-            } else {
-                secondaryDist = Math.min(
-                    Math.abs(currentCenter.x - rect.left),
-                    Math.abs(currentCenter.x - rect.right)
-                );
-            }
+            penalty = Math.abs(center.x - currentCenter.x) * 5;
         }
         
-        if (isValid) {
-            const score = primaryDist + secondaryDist * 10;
+        const score = distSq + penalty * penalty;
 
-            if (score < minDistance) {
-                minDistance = score;
-                bestCandidate = candidate;
-            }
+        if (score < minDistance) {
+            minDistance = score;
+            bestCandidate = candidate;
         }
     }
 
-    // Wrapping Logic
-    const isAlignedX = (rect.left < currentRect.right && rect.right > currentRect.left);
-    const isAlignedY = (rect.top < currentRect.bottom && rect.bottom > currentRect.top);
+    if (bestCandidate) {
+        setActive(bestCandidate);
+    }
+}
+
+function setActive(el: HTMLElement) {
+    if (activeElement) {
+        activeElement.classList.remove('active-key');
+    }
+    activeElement = el;
+    activeElement.classList.add('active-key');
+}
+
+export function handleSelect(phase: 'down' | 'repeat' | 'up') {
+    if (!activeElement) return;
     
-    let isWrapCandidate = false;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-        isWrapCandidate = isAlignedY;
-    } else {
-        isWrapCandidate = isAlignedX;
+    if (phase === 'down') {
+        activeElement.classList.add('hg-activeButton');
+    } else if (phase === 'up') {
+        activeElement.classList.remove('hg-activeButton');
     }
+}
 
-    if (isWrapCandidate) {
-        let score = Infinity;
-        // We want the element furthest in the OPPOSITE direction
-        if (e.key === 'ArrowLeft') score = -center.x; // Maximize X -> Minimize -X
-        else if (e.key === 'ArrowRight') score = center.x; // Minimize X
-        else if (e.key === 'ArrowUp') score = -center.y; // Maximize Y -> Minimize -Y
-        else if (e.key === 'ArrowDown') score = center.y; // Minimize Y
-        
-        if (score < minWrapDistance) {
-            minWrapDistance = score;
-            bestWrapCandidate = candidate;
-        }
-    }
-  }
-
-  if (bestCandidate) {
-    bestCandidate.focus();
-  } else if (bestWrapCandidate) {
-    bestWrapCandidate.focus();
-  }
+export function getActiveKey(): string | null {
+    return activeElement ? activeElement.getAttribute('data-skbtn') : null;
 }

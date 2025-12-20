@@ -3,66 +3,7 @@ use enigo::{Axis as EnigoAxis, Button as MouseButton, Coordinate, Direction, Eni
 use gilrs::{Axis, Button, Event, EventType, Gilrs};
 use tauri::AppHandle;
 
-pub fn handle_input(
-    event: &Event,
-    active: bool,
-    osk_open: bool,
-    app: &AppHandle,
-    enigo: &mut Enigo,
-) {
-    if !active {
-        return;
-    }
-
-    if osk_open {
-        handle_osk_input(event, app, enigo);
-        return;
-    } else {
-        handle_system_input(event, app, enigo);
-        return;
-    }
-}
-
-
-fn handle_osk_input(event: &Event, app: &AppHandle, enigo: &mut Enigo) {
-    let (btn, direction) = match event.event {
-        EventType::ButtonPressed(b, _) => (b, Direction::Press),
-        EventType::ButtonReleased(b, _) => (b, Direction::Release),
-        _ => return,
-    };
-
-    match btn {
-        Button::Start => {
-            if direction == Direction::Press {
-                funcs::close_osk(app);
-            }
-        }
-        Button::East => {
-            if direction == Direction::Release {
-                funcs::close_osk(app);
-            }
-        }
-        Button::South => {
-            let _ = enigo.key(Key::Return, direction);
-        }
-        Button::DPadUp => {
-            let _ = enigo.key(Key::UpArrow, direction);
-        }
-        Button::DPadDown => {
-            let _ = enigo.key(Key::DownArrow, direction);
-        }
-        Button::DPadLeft => {
-            let _ = enigo.key(Key::LeftArrow, direction);
-        }
-        Button::DPadRight => {
-            let _ = enigo.key(Key::RightArrow, direction);
-        }
-        _ => {}
-    }
-}
-
-
-fn handle_system_input(event: &Event, app: &AppHandle, enigo: &mut Enigo) {
+pub fn handle_system_input(event: &Event, app: &AppHandle, enigo: &mut Enigo) {
     let (btn, direction) = match event.event {
         EventType::ButtonPressed(b, _) => (b, Direction::Press),
         EventType::ButtonReleased(b, _) => (b, Direction::Release),

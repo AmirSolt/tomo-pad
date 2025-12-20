@@ -6,6 +6,7 @@ pub struct AppState {
     pub osk_open: bool,
     pub toggle_guard: bool,
     pub last_toggle_time: Option<Instant>,
+    pub target_hwnd: isize,
 }
 
 impl Default for AppState {
@@ -15,6 +16,7 @@ impl Default for AppState {
             osk_open: false,
             toggle_guard: false,
             last_toggle_time: None,
+            target_hwnd: 0,
         }
     }
 }

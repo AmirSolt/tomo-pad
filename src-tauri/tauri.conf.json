@@ -14,8 +14,11 @@
     "windows": [
       {
         "title": "tomo-pad",
-        "width": 800,
-        "height": 600
+        "width": 1200,
+        "height": 365,
+        "skipTaskbar": true,
+        "alwaysOnTop": true,
+        "decorations": false
       }
     ],
     "security": {
