@@ -18,7 +18,7 @@ pub fn init(app: &mut App) -> std::result::Result<(), Box<dyn std::error::Error>
             let screen_size = monitor.size();
             let window_size = window.outer_size().unwrap_or(tauri::PhysicalSize { width: 800, height: 300 });
             
-            const MARGIN: i32 = 50;
+            const MARGIN: i32 = 25;
 
             let x = screen_size.width as i32 - window_size.width as i32 - MARGIN;
             let y = screen_size.height as i32 - window_size.height as i32 - MARGIN;

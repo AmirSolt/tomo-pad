@@ -1,11 +1,11 @@
 {
     "platforms":  {
                       "windows-x86_64":  {
-                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTbW5uU3hsUUFENUhLMzRXa1NtTmZGYkJSejRRaWU0ZCtpK0M1WUtjSzFZNFFMMm9ZY21jVEhaRDFUTCtRazg3allVVmNqVTRYZWplYkJGMEYxSWZFUU9pTzMvYWdyQWdNPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY2MjExMTc5CWZpbGU6dG9tby1wYWRfMC4yLjFfeDY0LXNldHVwLmV4ZQo0SjBXYW5UaCs2VWVjZld5RFlLdWVPQWt5cXNjNW1Eb05uWGtwVm1mWlVOVEdFa3VWNXFtY0ZKVVA5aVBFTElOQThVTUtTMjhKMUl5eXJXQ1F5cWdCZz09Cg==",
-                                             "url":  "https://github.com/AmirSolt/tomo-pad/releases/download/v0.2.1/tomo-pad_0.2.1_x64-setup.exe"
+                                             "signature":  "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTbW5uU3hsUUFENUpPckZtOEJVWlU0Q1ZjTmRYUER2ZWtpSjZMSHNGNmVhSTlwSGZpNUJLRzFtM21zT0F5TjNBSVZJT3M1SWpPNzBaZzRSakhscU1OMzgyQjMzZHFxckFrPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzY2MjEyODU3CWZpbGU6dG9tby1wYWRfMC4yLjNfeDY0LXNldHVwLmV4ZQpmQnFVeWFzM080bnUzVFlvOGc0UFVGMFJpblVpbFh6ZkZINVFLczdSSjlFdHZWTk5qWXpJbUg2RUR1bDJpa2NNOGdrMHJmdC9xRENpS1hmUDdLZkNCUT09Cg==",
+                                             "url":  "https://github.com/AmirSolt/tomo-pad/releases/download/v0.2.3/tomo-pad_0.2.3_x64-setup.exe"
                                          }
                   },
-    "pub_date":  "2025-12-20T06:13:00Z",
-    "version":  "v0.2.1",
-    "notes":  "Update to v0.2.1"
+    "pub_date":  "2025-12-20T06:40:58Z",
+    "version":  "v0.2.3",
+    "notes":  "Update to v0.2.3"
 }

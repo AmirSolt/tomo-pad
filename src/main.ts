@@ -4,6 +4,8 @@ import 'simple-keyboard/build/css/index.css';
 import { initNavigation, handleMove, handleSelect, getActiveKey } from './navigation';
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { check } from '@tauri-apps/plugin-updater';
+import { relaunch } from '@tauri-apps/plugin-process';
  
 const keyboard = new Keyboard({
   onChange: input => onChange(input),
@@ -168,3 +170,21 @@ listen('osk:nav:select', (event: any) => {
 listen('osk:nav:shift', () => {
     handleShift();
 });
+
+async function checkForAppUpdates() {
+    try {
+        const update = await check();
+        if (update) {
+            console.log(`[UPDATER] Found update ${update.version}`);
+            await update.downloadAndInstall();
+            console.log('[UPDATER] Update installed, relaunching...');
+            await relaunch();
+        } else {
+            console.log('[UPDATER] No updates found');
+        }
+    } catch (error) {
+        console.error('[UPDATER] Failed to check for updates:', error);
+    }
+}
+
+checkForAppUpdates();
