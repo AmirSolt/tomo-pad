@@ -1,9 +1,8 @@
-import Keyboard from 'simple-keyboard';
 
 let activeElement: HTMLElement | null = null;
 let moveInterval: number | null = null;
 
-export function initNavigation(keyboard: Keyboard) {
+export function initNavigation() {
     // Initial selection
     setTimeout(() => {
         findInitialActive();

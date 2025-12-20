@@ -93,7 +93,7 @@ async function sendKey(key: string, phase: 'down' | 'repeat' | 'up') {
     }
 }
 
-initNavigation(keyboard);
+initNavigation();
  
 function onChange(input: string){
   const inputEl = document.querySelector(".input") as HTMLInputElement | null;
