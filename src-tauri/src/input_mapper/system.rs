@@ -20,7 +20,19 @@ pub fn handle_system_input(event: &Event, app: &AppHandle, enigo: &mut Enigo) {
             let _ = enigo.button(MouseButton::Left, direction);
         }
         Button::East => {
+            let _ = enigo.key(Key::Backspace, direction);
+        }
+        Button::West => {
             let _ = enigo.button(MouseButton::Right, direction);
+        }
+        Button::North => {
+            let _ = enigo.key(Key::Return, direction);
+        }
+        Button::LeftTrigger => {
+            let _ = enigo.key(Key::LeftArrow, direction);
+        }
+        Button::RightTrigger => {
+            let _ = enigo.key(Key::RightArrow, direction);
         }
         Button::DPadUp => {
             let _ = enigo.key(Key::UpArrow, direction);
